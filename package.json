@@ -2,7 +2,7 @@
   "name": "apollon-vscode",
   "displayName": "Apollon",
   "description": "",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.86.0"
   },
