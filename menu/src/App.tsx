@@ -4,6 +4,7 @@ import {
   VSCodeDropdown,
   VSCodeOption,
   VSCodeDivider,
+  VSCodeProgressRing,
 } from "@vscode/webview-ui-toolkit/react";
 import { vscode } from "./index";
 import { useState } from "react";
@@ -12,9 +13,9 @@ import useStore from "./store";
 function App() {
   const existingDiagrams = useStore((state) => state.diagrams);
   const [newDiagramName, setNewDiagramName] = useState<string>("");
-  const [existingDiagramPath, setExistingDiagramPath] = useState<string>(
-    existingDiagrams[0]
-  );
+  const [existingDiagramPath, setExistingDiagramPath] = useState<
+    string | undefined
+  >(undefined);
 
   const isValidDiagramName = (name: string) => {
     const invalidCharacters = /[\x00-\x1f\x80-\x9f<>:"/\\|?*\u0000]/;
@@ -31,7 +32,7 @@ function App() {
   const loadDiagram = () => {
     vscode.postMessage({
       type: "loadDiagram",
-      path: existingDiagramPath,
+      path: existingDiagramPath ? existingDiagramPath : existingDiagrams![0],
     });
   };
 
@@ -54,10 +55,16 @@ function App() {
 
       <VSCodeDivider className="w-full h-1" />
 
-      {existingDiagrams.length === 0 && (
+      {!existingDiagrams && (
+        <div className="flex flex-col items-center justify-center">
+          <VSCodeProgressRing />
+          <p>Fetching diagrams</p>
+        </div>
+      )}
+      {existingDiagrams && existingDiagrams.length === 0 && (
         <p>There are no diagrams available to load</p>
       )}
-      {existingDiagrams.length > 0 && (
+      {existingDiagrams && existingDiagrams.length > 0 && (
         <div className="dropdown-container">
           <label htmlFor="existing-diagrams">Existing diagrams</label>
           <VSCodeDropdown
@@ -75,7 +82,7 @@ function App() {
       )}
       <VSCodeButton
         className="my-3"
-        disabled={existingDiagrams.length == 0}
+        disabled={!existingDiagrams || existingDiagrams.length == 0}
         onClick={loadDiagram}
       >
         Load diagram
