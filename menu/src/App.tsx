@@ -9,13 +9,31 @@ import {
 import { vscode } from "./index";
 import { useState } from "react";
 import useStore from "./store";
+import { UMLDiagramType } from "@ls1intum/apollon";
 
 function App() {
   const existingDiagrams = useStore((state) => state.diagrams);
   const [newDiagramName, setNewDiagramName] = useState<string>("");
+  const [newDiagramType, setNewDiagramType] =
+    useState<UMLDiagramType>("ClassDiagram");
   const [existingDiagramPath, setExistingDiagramPath] = useState<
     string | undefined
   >(undefined);
+
+  const diagramTypes = [
+    "ClassDiagram",
+    "ObjectDiagram",
+    "ComponentDiagram",
+    "DeploymentDiagram",
+    "Flowchart",
+    "SyntaxTree",
+    "ActivityDiagram",
+    "UseCaseDiagram",
+    "CommunicationDiagram",
+    "PetriNet",
+    "ReachabilityGraph",
+    "BPMN",
+  ] as UMLDiagramType[];
 
   const isValidDiagramName = (name: string) => {
     const invalidCharacters = /[\x00-\x1f\x80-\x9f<>:"/\\|?*\u0000]/;
@@ -26,6 +44,7 @@ function App() {
     vscode.postMessage({
       type: "createDiagram",
       name: newDiagramName,
+      diagramType: newDiagramType,
     });
   };
 
@@ -45,6 +64,19 @@ function App() {
           setNewDiagramName((e.target as HTMLInputElement).value);
         }}
       />
+      <VSCodeDropdown
+        id="new-diagram-type"
+        className="mt-3"
+        onInput={(e) => {
+          setNewDiagramType(
+            (e.target as HTMLInputElement).value as UMLDiagramType
+          );
+        }}
+      >
+        {diagramTypes.map((type, index) => (
+          <VSCodeOption key={index}>{type}</VSCodeOption>
+        ))}
+      </VSCodeDropdown>
       <VSCodeButton
         className="my-3"
         disabled={!isValidDiagramName(newDiagramName)}
@@ -52,8 +84,6 @@ function App() {
       >
         Create new diagram
       </VSCodeButton>
-
-      <VSCodeDivider className="w-full h-1" />
 
       {!existingDiagrams && (
         <div className="flex flex-col items-center justify-center">

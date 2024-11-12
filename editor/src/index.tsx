@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import useStore from "./store";
-import { UMLModel } from "@ls1intum/apollon";
+import { UMLDiagramType, UMLModel } from "@ls1intum/apollon";
 
 export const vscode = acquireVsCodeApi();
 
@@ -16,11 +16,17 @@ window.addEventListener("message", (e) => {
   const message = e.data;
 
   if (message.command === "loadDiagram") {
-    useStore.setState({
-      model: message.model
-        ? (JSON.parse(message.model) as UMLModel)
-        : undefined,
-      createNewEditor: true,
+    useStore.setState((prevState) => {
+      return {
+        model: message.model
+          ? (JSON.parse(message.model) as UMLModel)
+          : undefined,
+        options: {
+          ...prevState.options,
+          type: message.diagramType as UMLDiagramType,
+        },
+        createNewEditor: true,
+      };
     });
   }
 });

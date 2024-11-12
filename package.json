@@ -53,6 +53,7 @@
   },
   "dependencies": {
     "@ls1intum/apollon": "^3.3.15",
+    "styled-components": "^6.1.13",
     "uuid": "^11.0.2"
   }
 }

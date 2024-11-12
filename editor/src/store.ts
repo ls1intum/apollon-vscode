@@ -13,7 +13,7 @@ interface Store {
 
 export const useStore = create<Store>((set) => ({
   model: undefined,
-  createNewEditor: true,
+  createNewEditor: false,
   options: defaultEditorOptions,
   setModel: (model: UMLModel) => {
     set({ model: model });

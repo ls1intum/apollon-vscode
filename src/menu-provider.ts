@@ -3,9 +3,7 @@ import * as fs from "fs";
 import fg from "fast-glob";
 import { defaultDiagram } from "./types";
 import path from "path";
-import { UMLModel } from "@ls1intum/apollon";
-
-// TODO: Add logic for diagram type
+import { UMLDiagramType, UMLModel } from "@ls1intum/apollon";
 
 export default class MenuProvider implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
@@ -76,7 +74,7 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
             command: "updateDiagrams",
             diagrams: diagrams,
           });
-          this.loadDiagram(name);
+          this.loadDiagram(name, data.diagramType);
           this.loadedDiagramPath = filePath;
 
           break;
@@ -106,7 +104,13 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
               const contentString = new TextDecoder("utf-8").decode(content);
               const contentJson = JSON.parse(contentString);
 
-              this.loadDiagram(diagramName, contentJson.model);
+              // TODO: Add error handling for when model.type is undefined and other cases
+
+              this.loadDiagram(
+                diagramName,
+                contentJson.model.type,
+                contentJson.model
+              );
               this.loadedDiagramPath = fullDiagramPath;
             } else {
               vscode.window.showErrorMessage("Diagram file not found");
@@ -123,13 +127,25 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
     });
   }
 
-  private loadDiagram(name: string, model?: UMLModel) {
+  private loadDiagram(
+    name: string,
+    diagramType: UMLDiagramType,
+    model?: UMLModel
+  ) {
+    const editorIconPath = vscode.Uri.joinPath(
+      this._extensionUri,
+      "media",
+      "apollon-type.svg"
+    );
+
     if (this.editorPanel) {
       this.editorPanel.webview.postMessage({
         command: "loadDiagram",
+        diagramType: diagramType,
         model: model ? JSON.stringify(model) : undefined,
       });
       this.editorPanel.title = name;
+      this.editorPanel.iconPath = editorIconPath;
       this.editorPanel.reveal(vscode.ViewColumn.One);
     } else {
       this.editorPanel = vscode.window.createWebviewPanel(
@@ -138,13 +154,17 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
         vscode.ViewColumn.One,
         { enableScripts: true, retainContextWhenHidden: true }
       );
+      this.editorPanel.iconPath = editorIconPath;
       this.editorPanel.webview.onDidReceiveMessage(async (data) => {
         switch (data.type) {
           case "editorMounted": {
-            if (this.editorPanel && this.modelToLoad) {
+            if (this.editorPanel) {
               this.editorPanel.webview.postMessage({
                 command: "loadDiagram",
-                model: JSON.stringify(this.modelToLoad),
+                diagramType: diagramType,
+                model: this.modelToLoad
+                  ? JSON.stringify(this.modelToLoad)
+                  : undefined,
               });
               this.modelToLoad = undefined;
             }

@@ -8,7 +8,6 @@ import useStore from "../../store";
 const ApollonContainer = styled.div`
   display: flex;
   flex-direction: column;
-  flex-grow: 2;
   overflow: hidden;
   background-color: white;
 `;
@@ -25,11 +24,14 @@ export const ApollonEditorComponent: React.FC = () => {
 
   useEffect(() => {
     const initializeEditor = async () => {
-      if (containerRef.current != null && createNewEditor) {
+      if (!containerRef.current) return;
+
+      if (createNewEditor) {
         if (editorRef.current) {
           await editorRef.current.nextRender;
           editorRef.current.destroy();
         }
+
         editorRef.current = new ApollonEditor(containerRef.current, options);
         await editorRef.current?.nextRender;
 
@@ -47,7 +49,7 @@ export const ApollonEditorComponent: React.FC = () => {
     };
 
     initializeEditor();
-  }, [containerRef.current, createNewEditor]);
+  }, [createNewEditor]);
 
   return <ApollonContainer ref={containerRef} />;
 };
