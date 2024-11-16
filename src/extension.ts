@@ -1,13 +1,53 @@
 import * as vscode from "vscode";
+import * as fs from "fs";
 
 import MenuProvider from "./menu-provider";
 
 export function activate(context: vscode.ExtensionContext) {
   const provider = new MenuProvider(context.extensionUri);
+  const disposable = vscode.commands.registerCommand(
+    "apollonEditor.openDiagram",
+    async () => {
+      const activeEditor = vscode.window.activeTextEditor;
+      if (activeEditor) {
+        const diagramPath = activeEditor.document.uri.fsPath;
+        const diagramName = diagramPath.substring(
+          diagramPath.lastIndexOf("/") + 1
+        );
+
+        if (fs.existsSync(diagramPath)) {
+          const content = await vscode.workspace.fs.readFile(
+            vscode.Uri.file(diagramPath)
+          );
+          const contentString = new TextDecoder("utf-8").decode(content);
+          let contentJson;
+
+          try {
+            contentJson = JSON.parse(contentString);
+          } catch (error) {
+            vscode.window.showErrorMessage(
+              "The diagram can not be loaded as it does not have a valid format"
+            );
+            return;
+          }
+
+          provider.loadDiagram(
+            diagramName,
+            contentJson.model?.type,
+            contentJson.model
+          );
+          provider.setLoadedDiagramPath(diagramPath);
+        }
+      } else {
+        vscode.window.showErrorMessage("No active file!");
+      }
+    }
+  );
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider("menu", provider)
   );
+  context.subscriptions.push(disposable);
 
   associateApollonType();
 }

@@ -46,7 +46,7 @@ function App() {
           Save
         </VSCodeButton>
         <VSCodeButton className="mx-3" onClick={exportDiagram}>
-          Export
+          Export as SVG
         </VSCodeButton>
       </AppBar>
       <ApollonEditorProvider value={{ editor, setEditor: handleSetEditor }}>

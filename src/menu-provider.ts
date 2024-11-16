@@ -102,9 +102,16 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
                 vscode.Uri.file(fullDiagramPath)
               );
               const contentString = new TextDecoder("utf-8").decode(content);
-              const contentJson = JSON.parse(contentString);
+              let contentJson;
 
-              // TODO: Add error handling for when model.type is undefined and other cases
+              try {
+                contentJson = JSON.parse(contentString);
+              } catch (error) {
+                vscode.window.showErrorMessage(
+                  "The diagram can not be loaded as it does not have a valid format"
+                );
+                return;
+              }
 
               this.loadDiagram(
                 diagramName,
@@ -127,11 +134,7 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
     });
   }
 
-  private loadDiagram(
-    name: string,
-    diagramType?: UMLDiagramType,
-    model?: UMLModel
-  ) {
+  loadDiagram(name: string, diagramType?: UMLDiagramType, model?: UMLModel) {
     const editorIconPath = vscode.Uri.joinPath(
       this._extensionUri,
       "media",
@@ -144,7 +147,7 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
         diagramType: diagramType,
         model: model ? JSON.stringify(model) : undefined,
       });
-      this.editorPanel.title = name;
+      this.editorPanel.title = `${name} (Editor view)`;
       this.editorPanel.iconPath = editorIconPath;
       this.editorPanel.reveal(vscode.ViewColumn.One);
     } else {
@@ -252,6 +255,10 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
         this.loadedDiagramPath = undefined;
       });
     }
+  }
+
+  setLoadedDiagramPath(loadedDiagramPath: string) {
+    this.loadedDiagramPath = loadedDiagramPath;
   }
 
   private async fetchDiagrams(rootUri: vscode.Uri) {
