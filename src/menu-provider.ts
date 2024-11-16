@@ -108,7 +108,7 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
 
               this.loadDiagram(
                 diagramName,
-                contentJson.model.type,
+                contentJson.model?.type,
                 contentJson.model
               );
               this.loadedDiagramPath = fullDiagramPath;
@@ -129,7 +129,7 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
 
   private loadDiagram(
     name: string,
-    diagramType: UMLDiagramType,
+    diagramType?: UMLDiagramType,
     model?: UMLModel
   ) {
     const editorIconPath = vscode.Uri.joinPath(

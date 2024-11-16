@@ -9,7 +9,7 @@ const ApollonContainer = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background-color: white;
+  background-color: var(--apollon-background);
 `;
 
 export const ApollonEditorComponent: React.FC = () => {

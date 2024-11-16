@@ -5,8 +5,11 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import useStore from "./store";
 import { UMLDiagramType, UMLModel } from "@ls1intum/apollon";
+import { setTheme } from "./theme-switcher";
 
 export const vscode = acquireVsCodeApi();
+
+setTheme("light");
 
 const root = ReactDOM.createRoot(
   document.getElementById("editor-root") as HTMLElement
