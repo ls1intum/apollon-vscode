@@ -22,3 +22,18 @@ body {
   line-height: normal;
   margin-bottom: 3px;
 }
+
+.apollon-container {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--apollon-background);
+}
+
+.app-bar {
+  width: 100%;
+  background: var(--vscode-activityBar-background);
+  padding: 1rem 0;
+  display: flex;
+  justify-content: flex-start;
+}

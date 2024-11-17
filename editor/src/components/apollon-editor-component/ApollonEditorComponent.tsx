@@ -1,16 +1,8 @@
 import { ApollonEditor, UMLModel } from "@ls1intum/apollon";
 import React, { useEffect, useRef, useContext } from "react";
-import styled from "styled-components";
 
 import { ApollonEditorContext } from "./ApollonEditorContext";
 import useStore from "../../store";
-
-const ApollonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background-color: var(--apollon-background);
-`;
 
 export const ApollonEditorComponent: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -51,5 +43,5 @@ export const ApollonEditorComponent: React.FC = () => {
     initializeEditor();
   }, [createNewEditor]);
 
-  return <ApollonContainer ref={containerRef} />;
+  return <div className="apollon-container" ref={containerRef} />;
 };
