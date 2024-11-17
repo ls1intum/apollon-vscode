@@ -4,23 +4,16 @@ This is an IDE-integrated Visual Studio Code extension for the UML modeling edit
 
 ## Installation
 
-First install dependencies in the root directory
+First install dependencies
 
 ```
-npm install
+npm run instal:all
 ```
 
-Then, both for the `editor` and `menu` react apps, move to their directories and install dependencies
+Then start webview apps
 
 ```
-cd {editor | menu}
-npm install
-```
-
-Then run the script to start the app
-
-```
-npm start
+npm start:webviews
 ```
 
 ## Development
