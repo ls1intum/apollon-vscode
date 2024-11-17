@@ -53,7 +53,13 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "package": "vsce package",
+    "start:webviews": "cd menu && npm run start && cd ../editor && npm run start",
+    "build:webviews": "cd menu && npm run build && cd ../editor && npm run build",
+    "install:webviews": "cd menu && npm install && cd ../editor && npm install",
+    "install:all": "npm install && npm run install:webviews",
+    "build:all": "npm run compile && npm run build:webviews"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",
@@ -69,6 +75,7 @@
   },
   "dependencies": {
     "@ls1intum/apollon": "^3.3.15",
+    "@vscode/vsce": "^3.2.1",
     "styled-components": "6.1.8",
     "uuid": "^11.0.2"
   }
