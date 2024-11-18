@@ -51,11 +51,6 @@ jobs:
       - name: Publish Plugin
         run: npx vsce publish --packagePath ./apollon-vscode-${{ steps.strip-v.outputs.VERSION }}.vsix -p ${{ secrets.PUBLISH_TOKEN }}
 
-      - name: Publish to VSX Registry
-        id: vsx-publish
-        run: |
-          npx ovsx publish -p ${{ secrets.PUBLISH_VSX }} ./apollon-vscode-${{ steps.strip-v.outputs.VERSION }}.vsix
-
       # Upload artifact as a release asset
       - name: Upload Release Asset
         env:
