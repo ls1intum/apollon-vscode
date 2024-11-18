@@ -15,12 +15,28 @@ esbuild.js
 .github/**
 
 #Ignore all menu files except build directory
-menu/**
-!menu/dist
+menu/src/**
+menu/public/**
+menu/.parcel-cache/**
+menu/tailwind.config.js
+menu/README.md
+menu/package.json
+menu/package-lock.json
+menu/node_modules/**
+menu/.gitignore
+menu/.vscode/**
 
 #Ignore all editor files except build directory
-editor/**
-!editor/dist
+editor/src/**
+editor/public/**
+editor/.parcel-cache/**
+editor/tailwind.config.js
+editor/README.md
+editor/package.json
+editor/package-lock.json
+editor/node_modules/**
+editor/.gitignore
+editor/.vscode/**
 
 # Ignore misc
 .yarnrc
