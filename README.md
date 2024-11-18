@@ -7,7 +7,7 @@ This is an IDE-integrated Visual Studio Code extension for the UML modeling edit
 Install all dependencies
 
 ```
-npm run instal:all
+npm run install:all
 ```
 
 ## Development
