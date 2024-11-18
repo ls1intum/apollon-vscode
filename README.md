@@ -4,19 +4,29 @@ This is an IDE-integrated Visual Studio Code extension for the UML modeling edit
 
 ## Installation
 
-First install dependencies
+Install all dependencies
 
 ```
 npm run instal:all
 ```
 
-Then start webview apps
-
-```
-npm start:webviews
-```
-
 ## Development
+
+### Debug extension
+
+First, run the menu webview app
+
+```
+npm run start:menu
+```
+
+Then, in another terminal tab, run the editor webview app
+
+```
+npm run start:editor
+```
+
+Finally, in order to debug the extension in VS Code, press `F5`, or press `Ctrl+Shift+P` and type `Debug: Start Debugging`.
 
 ### Release a new version
 
