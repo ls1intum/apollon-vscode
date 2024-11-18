@@ -2,6 +2,7 @@
   "name": "apollon-vscode",
   "displayName": "Apollon",
   "description": "",
+  "publisher": "tumaet",
   "version": "1.0.0",
   "engines": {
     "vscode": "^1.86.0"
