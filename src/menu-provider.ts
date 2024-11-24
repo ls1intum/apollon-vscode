@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
-import fg from "fast-glob";
 import { defaultDiagram } from "./types";
 import path from "path";
 import { UMLDiagramType, UMLModel } from "@ls1intum/apollon";
@@ -262,15 +261,20 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
   }
 
   private async fetchDiagrams(rootUri: vscode.Uri) {
-    const diagrams = await fg(rootUri.path + "/**/*.apollon", {
-      ignore: [
-        `!${rootUri.path}/.git`,
-        `!${rootUri.path}/.vscode`,
-        `!${rootUri.path}/**/node_modules`,
-      ],
-    });
+    const includePattern = new vscode.RelativePattern(
+      rootUri.fsPath,
+      "**/*.apollon"
+    );
+    const excludePattern = new vscode.RelativePattern(
+      rootUri.fsPath,
+      "{.git,.vscode,**/node_modules}/**"
+    );
+    const diagrams = await vscode.workspace.findFiles(
+      includePattern.pattern,
+      excludePattern.pattern
+    );
 
-    return diagrams.map((file) => `.${file.split(rootUri.path)[1]}`);
+    return diagrams.map((file) => `.${file.fsPath.split(rootUri.path)[1]}`);
   }
 
   private _getHtmlForMenu(webview: vscode.Webview) {

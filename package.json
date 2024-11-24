@@ -11,7 +11,7 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
@@ -49,9 +49,10 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run build",
+    "compile": "webpack --mode development",
+    "watch": "webpack --mode development --watch",
+    "build": "webpack --mode production",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
@@ -61,7 +62,7 @@
     "build:webviews": "cd menu && npm run build && cd ../editor && npm run build",
     "install:webviews": "cd menu && npm install && cd ../editor && npm install",
     "install:all": "npm install && npm run install:webviews",
-    "build:all": "npm run compile && npm run build:webviews"
+    "build:all": "npm run build && npm run build:webviews"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",
@@ -73,12 +74,14 @@
     "@vscode/test-cli": "^0.0.6",
     "@vscode/test-electron": "^2.3.9",
     "eslint": "^8.56.0",
-    "typescript": "^5.3.3"
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.96.1",
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
     "@ls1intum/apollon": "^3.3.15",
     "@vscode/vsce": "^3.2.1",
-    "fast-glob": "^3.3.2",
     "styled-components": "^5.3.11",
     "uuid": "^11.0.2"
   },
