@@ -49,7 +49,7 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run build",
+    "vscode:prepublish": "npm run build:all",
     "compile": "webpack --mode development",
     "watch": "webpack --mode development --watch",
     "build": "webpack --mode production",
