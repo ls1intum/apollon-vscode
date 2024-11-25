@@ -59,7 +59,7 @@ const extensionConfig = {
   performance: {
     hints: false,
   },
-  devtool: "inline-source-map", // create a source map that points to the original source file
+  devtool: "nosources-source-map", // create a source map that points to the original source file
   infrastructureLogging: {
     level: "log", // enables logging required for problem matchers
   },

@@ -55,5 +55,12 @@
     "postcss": "^8.4.35",
     "process": "^0.11.10",
     "tailwindcss": "^3.4.1"
+  },
+  "targets": {
+    "default": {
+      "sourceMap": {
+        "inline": true
+      }
+    }
   }
 }
