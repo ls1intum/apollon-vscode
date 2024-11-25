@@ -154,7 +154,11 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
         "editor",
         name,
         vscode.ViewColumn.One,
-        { enableScripts: true, retainContextWhenHidden: true }
+        {
+          enableScripts: true,
+          retainContextWhenHidden: true,
+          localResourceRoots: [this._extensionUri],
+        }
       );
       this.editorPanel.iconPath = editorIconPath;
       this.editorPanel.webview.onDidReceiveMessage(async (data) => {
