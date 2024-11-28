@@ -152,7 +152,7 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
     } else {
       this.editorPanel = vscode.window.createWebviewPanel(
         "editor",
-        name,
+        `${name} (Editor view)`,
         vscode.ViewColumn.One,
         {
           enableScripts: true,

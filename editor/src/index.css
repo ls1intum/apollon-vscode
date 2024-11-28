@@ -33,7 +33,7 @@ body {
 .app-bar {
   width: 100%;
   background: var(--vscode-activityBar-background);
-  padding: 1rem 0;
+  height: 3rem;
   display: flex;
   justify-content: flex-start;
 }

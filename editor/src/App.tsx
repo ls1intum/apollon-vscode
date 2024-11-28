@@ -33,10 +33,10 @@ function App() {
   return (
     <>
       <div className="app-bar">
-        <VSCodeButton className="mx-3" onClick={saveDiagram}>
+        <VSCodeButton className="m-3" onClick={saveDiagram}>
           Save
         </VSCodeButton>
-        <VSCodeButton className="mx-3" onClick={exportDiagram}>
+        <VSCodeButton className="m-3" onClick={exportDiagram}>
           Export as SVG
         </VSCodeButton>
       </div>

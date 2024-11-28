@@ -10,6 +10,7 @@ const ApollonContainer = styled.div`
   flex-direction: column;
   overflow: hidden;
   background-color: var(--apollon-background);
+  min-height: calc(100vh - 3rem);
 `;
 
 export const ApollonEditorComponent: React.FC = () => {
