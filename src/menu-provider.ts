@@ -218,6 +218,8 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
             break;
           }
           case "exportDiagram": {
+            const { exportContent, exportType } = data;
+
             if (!this.loadedDiagramPath) {
               vscode.window.showErrorMessage("An unexpected error occured");
               return;
@@ -227,14 +229,14 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
               this.loadedDiagramPath.substring(
                 0,
                 this.loadedDiagramPath.lastIndexOf(".") + 1
-              ) + data.exportType
+              ) + exportType
             );
-            const exportContentBuffer = Buffer.from(data.exportContent, "utf8");
+            const exportContentBuffer = Buffer.from(exportContent, "utf8");
 
             try {
               await vscode.workspace.fs.writeFile(
                 exportPath,
-                exportContentBuffer
+                exportContentBuffer!
               );
               vscode.window.showInformationMessage(
                 `Successfuly exported diagram ${name}`

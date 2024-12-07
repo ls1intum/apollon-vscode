@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useContext } from "react";
 import styled from "styled-components";
 
 import { ApollonEditorContext } from "./ApollonEditorContext";
-import useStore from "../../store";
+import useStore from "../store";
 
 const ApollonContainer = styled.div`
   display: flex;
