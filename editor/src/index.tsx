@@ -5,7 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import useStore from "./store";
 import { UMLDiagramType, UMLModel } from "@ls1intum/apollon";
-import { setTheme } from "./theme-switcher";
+import { setTheme } from "./theme-switcher/theme-switcher";
 
 export const vscode = acquireVsCodeApi();
 

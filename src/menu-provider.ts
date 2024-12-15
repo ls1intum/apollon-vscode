@@ -4,6 +4,12 @@ import { defaultDiagram } from "./types";
 import path from "path";
 import { UMLDiagramType, UMLModel } from "@ls1intum/apollon";
 
+type EditorMessage = {
+  type: "editorMounted" | "saveDiagram" | "exportDiagram";
+  exportContent: string;
+  exportType: "png" | "svg";
+};
+
 export default class MenuProvider implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
   private editorPanel?: vscode.WebviewPanel;
@@ -147,7 +153,6 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
         model: model ? JSON.stringify(model) : undefined,
       });
       this.editorPanel.title = `${name} (Editor view)`;
-      this.editorPanel.iconPath = editorIconPath;
       this.editorPanel.reveal(vscode.ViewColumn.One);
     } else {
       this.editorPanel = vscode.window.createWebviewPanel(
@@ -161,100 +166,14 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
         }
       );
       this.editorPanel.iconPath = editorIconPath;
-      this.editorPanel.webview.onDidReceiveMessage(async (data) => {
-        switch (data.type) {
-          case "editorMounted": {
-            if (this.editorPanel) {
-              this.editorPanel.webview.postMessage({
-                command: "loadDiagram",
-                diagramType: diagramType,
-                model: this.modelToLoad
-                  ? JSON.stringify(this.modelToLoad)
-                  : undefined,
-              });
-              this.modelToLoad = undefined;
-            }
-
-            break;
-          }
-          case "saveDiagram": {
-            const rootUri = vscode.workspace.workspaceFolders?.[0].uri;
-
-            if (!rootUri) {
-              vscode.window.showErrorMessage("No workspace folder open");
-              return;
-            }
-
-            if (!this.loadedDiagramPath) {
-              vscode.window.showErrorMessage("An unexpected error occured");
-              return;
-            }
-
-            try {
-              if (fs.existsSync(this.loadedDiagramPath)) {
-                const content = await vscode.workspace.fs.readFile(
-                  vscode.Uri.file(this.loadedDiagramPath)
-                );
-                const contentString = new TextDecoder("utf-8").decode(content);
-                const contentJson = JSON.parse(contentString);
-                contentJson.model = data.model;
-
-                await vscode.workspace.fs.writeFile(
-                  vscode.Uri.file(this.loadedDiagramPath),
-                  Buffer.from(JSON.stringify(contentJson), "utf8")
-                );
-                vscode.window.showInformationMessage(
-                  `Successfuly saved diagram ${name}`
-                );
-              } else {
-                vscode.window.showErrorMessage("Diagram file not found");
-              }
-            } catch (error) {
-              vscode.window.showErrorMessage(
-                `An unexpected error occured: "${error}"`
-              );
-            }
-
-            break;
-          }
-          case "exportDiagram": {
-            const { exportContent, exportType } = data;
-
-            if (!this.loadedDiagramPath) {
-              vscode.window.showErrorMessage("An unexpected error occured");
-              return;
-            }
-
-            const exportPath = vscode.Uri.file(
-              this.loadedDiagramPath.substring(
-                0,
-                this.loadedDiagramPath.lastIndexOf(".") + 1
-              ) + exportType
-            );
-            const exportContentBuffer = Buffer.from(exportContent, "utf8");
-
-            try {
-              await vscode.workspace.fs.writeFile(
-                exportPath,
-                exportContentBuffer!
-              );
-              vscode.window.showInformationMessage(
-                `Successfuly exported diagram ${name}`
-              );
-            } catch (error) {
-              vscode.window.showErrorMessage(
-                `An unexpected error occured: "${error}"`
-              );
-            }
-
-            break;
-          }
-        }
-      });
+      this.modelToLoad = model;
+      this.editorPanel.webview.onDidReceiveMessage(
+        async (data) =>
+          await this.listenToEditorMessages(data, name, diagramType)
+      );
       this.editorPanel.webview.html = this._getHtmlForEditor(
         this.editorPanel.webview
       );
-      this.modelToLoad = model;
       this.editorPanel.onDidDispose(() => {
         this.editorPanel = undefined;
         this.loadedDiagramPath = undefined;
@@ -264,6 +183,98 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
 
   setLoadedDiagramPath(loadedDiagramPath: string) {
     this.loadedDiagramPath = loadedDiagramPath;
+  }
+
+  private async listenToEditorMessages(
+    data: EditorMessage,
+    name: string,
+    diagramType?: UMLDiagramType
+  ) {
+    switch (data.type) {
+      case "editorMounted": {
+        if (this.editorPanel) {
+          this.editorPanel.webview.postMessage({
+            command: "loadDiagram",
+            diagramType: diagramType,
+            model: this.modelToLoad
+              ? JSON.stringify(this.modelToLoad)
+              : undefined,
+          });
+          this.modelToLoad = undefined;
+        }
+
+        break;
+      }
+      case "saveDiagram": {
+        const rootUri = vscode.workspace.workspaceFolders?.[0].uri;
+
+        if (!rootUri) {
+          vscode.window.showErrorMessage("No workspace folder open");
+          return;
+        }
+
+        if (!this.loadedDiagramPath) {
+          vscode.window.showErrorMessage("An unexpected error occured");
+          return;
+        }
+
+        try {
+          if (fs.existsSync(this.loadedDiagramPath)) {
+            const content = await vscode.workspace.fs.readFile(
+              vscode.Uri.file(this.loadedDiagramPath)
+            );
+            const contentString = new TextDecoder("utf-8").decode(content);
+            const contentJson = JSON.parse(contentString);
+            contentJson.model = this.modelToLoad;
+
+            await vscode.workspace.fs.writeFile(
+              vscode.Uri.file(this.loadedDiagramPath),
+              Buffer.from(JSON.stringify(contentJson), "utf8")
+            );
+            vscode.window.showInformationMessage(
+              `Successfuly saved diagram ${name}`
+            );
+          } else {
+            vscode.window.showErrorMessage("Diagram file not found");
+          }
+        } catch (error) {
+          vscode.window.showErrorMessage(
+            `An unexpected error occured: "${error}"`
+          );
+        }
+
+        break;
+      }
+      case "exportDiagram": {
+        const { exportContent, exportType } = data;
+
+        if (!this.loadedDiagramPath) {
+          vscode.window.showErrorMessage("An unexpected error occured");
+          return;
+        }
+
+        const exportPath = vscode.Uri.file(
+          this.loadedDiagramPath.substring(
+            0,
+            this.loadedDiagramPath.lastIndexOf(".") + 1
+          ) + exportType
+        );
+        const exportContentBuffer = Buffer.from(exportContent, "utf8");
+
+        try {
+          await vscode.workspace.fs.writeFile(exportPath, exportContentBuffer!);
+          vscode.window.showInformationMessage(
+            `Successfuly exported diagram ${name}`
+          );
+        } catch (error) {
+          vscode.window.showErrorMessage(
+            `An unexpected error occured: "${error}"`
+          );
+        }
+
+        break;
+      }
+    }
   }
 
   private async fetchDiagrams(rootUri: vscode.Uri) {
