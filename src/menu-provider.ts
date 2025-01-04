@@ -8,6 +8,7 @@ type EditorMessage = {
   type: "editorMounted" | "saveDiagram" | "exportDiagram";
   exportContent: string;
   exportType: "png" | "svg";
+  model: UMLModel;
 };
 
 export default class MenuProvider implements vscode.WebviewViewProvider {
@@ -225,14 +226,11 @@ export default class MenuProvider implements vscode.WebviewViewProvider {
             );
             const contentString = new TextDecoder("utf-8").decode(content);
             const contentJson = JSON.parse(contentString);
-            contentJson.model = this.modelToLoad;
+            contentJson.model = data.model;
 
             await vscode.workspace.fs.writeFile(
               vscode.Uri.file(this.loadedDiagramPath),
               Buffer.from(JSON.stringify(contentJson), "utf8")
-            );
-            vscode.window.showInformationMessage(
-              `Successfuly saved diagram ${name}`
             );
           } else {
             vscode.window.showErrorMessage("Diagram file not found");

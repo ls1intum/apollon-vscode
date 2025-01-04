@@ -8,7 +8,6 @@ import {
 import { ApollonEditorProvider } from "./ApollonEditor/ApollonEditorContext";
 import { ApollonEditorComponent } from "./ApollonEditor/ApollonEditorComponent";
 import { vscode } from "./index";
-import useStore from "./store";
 import { convertRenderedSVGToPNG } from "./utils/converter";
 
 type ExportType = "svg" | "png";
@@ -18,14 +17,6 @@ function App() {
   const [exportType, setExportType] = useState<ExportType>("svg");
   const handleSetEditor = (newEditor: ApollonEditor) => {
     setEditor(newEditor);
-  };
-  const model = useStore((state) => state.model);
-
-  const saveDiagram = () => {
-    vscode.postMessage({
-      type: "saveDiagram",
-      model: model,
-    });
   };
 
   const exportDiagram = async () => {
@@ -54,9 +45,6 @@ function App() {
   return (
     <>
       <div className="app-bar">
-        <VSCodeButton className="m-3" onClick={saveDiagram}>
-          Save
-        </VSCodeButton>
         <VSCodeButton className="m-3" onClick={exportDiagram}>
           Export
         </VSCodeButton>

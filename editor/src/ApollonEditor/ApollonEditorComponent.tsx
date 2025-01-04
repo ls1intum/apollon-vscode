@@ -1,6 +1,7 @@
 import { ApollonEditor, UMLModel } from "@ls1intum/apollon";
 import React, { useEffect, useRef, useContext } from "react";
 import styled from "styled-components";
+import { vscode } from "../index";
 
 import { ApollonEditorContext } from "./ApollonEditorContext";
 import useStore from "../store";
@@ -42,6 +43,10 @@ export const ApollonEditorComponent: React.FC = () => {
 
         editorRef.current.subscribeToModelChange((model: UMLModel) => {
           useStore.setState({ model: model });
+          vscode.postMessage({
+            type: "saveDiagram",
+            model: model,
+          });
         });
 
         setEditor!(editorRef.current);

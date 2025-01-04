@@ -18,12 +18,12 @@ export function activate(context: vscode.ExtensionContext) {
 
   associateApollonType();
 }
+
 /**
  * Opens the currently viewed .apollon diagram inside of the Apollon editor
  *
  * @param provider
  */
-
 async function openDiagram(provider: MenuProvider) {
   const activeEditor = vscode.window.activeTextEditor;
   if (activeEditor) {
