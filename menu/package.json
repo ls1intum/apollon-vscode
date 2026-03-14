@@ -11,7 +11,7 @@
     "@types/react": "^18.2.59",
     "@types/react-dom": "^18.2.19",
     "@types/vscode-webview": "^1.57.5",
-    "@vscode/codicons": "^0.0.35",
+    "@vscode/codicons": "^0.0.45",
     "@vscode/webview-ui-toolkit": "^1.4.0",
     "fast-glob": "^3.3.2",
     "react": "18.2.0",
